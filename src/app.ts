@@ -14,9 +14,11 @@ class App {
 
 		this.client = new Client({
 			botId: process.env.DISCORD_BOT_ID,
+			botGuilds: ["542108932878106625"],
 			silent: false,
 			intents: [
-				IntentsBitField.Flags.Guilds
+				IntentsBitField.Flags.Guilds,
+				IntentsBitField.Flags.GuildVoiceStates
 			]
 		});
 	}
