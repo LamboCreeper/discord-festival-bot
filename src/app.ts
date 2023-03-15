@@ -6,7 +6,6 @@ import DirectoryUtils from "./utils/DirectoryUtils";
 class App {
 	private static COMMANDS_DIRECTORY = "commands";
 	private readonly client: Client;
-
 	constructor() {
 		if (!process.env.DISCORD_TOKEN) {
 			throw new Error("You must supply the DISCORD_TOKEN environment variable.");
@@ -14,7 +13,7 @@ class App {
 
 		this.client = new Client({
 			botId: process.env.DISCORD_BOT_ID,
-			botGuilds: ["542108932878106625"],
+			botGuilds: ["542108932878106625", "133741089575141377"],
 			silent: false,
 			intents: [
 				IntentsBitField.Flags.Guilds,

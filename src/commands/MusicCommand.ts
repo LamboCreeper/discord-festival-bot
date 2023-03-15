@@ -1,5 +1,12 @@
-import { Discord, Slash } from "discordx";
-import {CommandInteraction, EmbedBuilder, GuildMember, InteractionResponse} from "discord.js";
+import { Discord, Slash, SlashOption } from "discordx";
+import {
+	CommandInteraction,
+	EmbedBuilder,
+	GuildMember,
+	InteractionResponse,
+	PermissionsBitField,
+	ApplicationCommandOptionType
+} from "discord.js";
 import {
 	createAudioPlayer,
 	createAudioResource,
@@ -15,9 +22,18 @@ export default class MusicCommand {
 
 	@Slash({
 		name: "play",
-		description: "Play audio"
+		description: "Play audio",
+		defaultMemberPermissions: [PermissionsBitField.Flags.ManageEvents]
 	})
-	async onPlayCommand(interaction: CommandInteraction): Promise<InteractionResponse> {
+	async onPlayCommand(
+		@SlashOption({
+			name: "url",
+			description: "The URL of the set",
+			type: ApplicationCommandOptionType.String,
+		})
+		url: string,
+		interaction: CommandInteraction
+	): Promise<InteractionResponse> {
 		const { guild, member } = interaction;
 
 		if (!guild || !member || !(member instanceof GuildMember)) {
@@ -36,7 +52,7 @@ export default class MusicCommand {
 			});
 		}
 
-		const resource = createAudioResource(`/Volumes/Files/Skrillcord/festival-bot/audio.mp3`, {
+		const resource = createAudioResource(url, {
 			inlineVolume: true
 		});
 
