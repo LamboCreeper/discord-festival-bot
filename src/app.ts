@@ -1,7 +1,17 @@
 import "reflect-metadata";
 import { Client } from "discordx";
+import firebase from "firebase-admin";
 import { Events, IntentsBitField } from "discord.js";
 import DirectoryUtils from "./utils/DirectoryUtils";
+
+const serviceAccount = require("../firebase.json");
+
+firebase.initializeApp({
+	credential: firebase.credential.cert(serviceAccount),
+	databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
+});
+
+export const firestore = firebase.firestore();
 
 class App {
 	private static COMMANDS_DIRECTORY = "commands";
