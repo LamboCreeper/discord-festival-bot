@@ -5,7 +5,8 @@ import {
 	GuildMember,
 	InteractionResponse,
 	PermissionsBitField,
-	ApplicationCommandOptionType, BaseGuildTextChannel
+	ApplicationCommandOptionType,
+	BaseGuildTextChannel
 } from "discord.js";
 import {
 	createAudioPlayer,
@@ -63,7 +64,7 @@ export default class MusicCommand {
 
 			let resource;
 			const paths = url?.split('/');
-			let title = paths[paths.length - 1] ?? 'Unknown';
+			let title = paths?.[paths?.length - 1] ?? 'Unknown';
 
 			if (!url && !setId) {
 				return interaction.editReply({
@@ -145,9 +146,9 @@ export default class MusicCommand {
 
 			if (announcementChannel) {
 				const embed = new EmbedBuilder()
-					.setTitle('Ubbfest')
-					.setDescription(`**${title}** is now playing! <:oincc:1073078312097824850>`)
-					.setColor("#F34CA0");
+					.setTitle('Summer Signal')
+					.setDescription(`**${title}** is now playing! <:signal:1073292494999142401>`)
+					.setColor("#F6AA73");
 
 				await (announcementChannel as BaseGuildTextChannel).send({
 					embeds: [embed]
@@ -165,38 +166,42 @@ export default class MusicCommand {
 		description: "Get the current track set"
 	})
 	async onPlayingCommand(interaction: CommandInteraction) {
-		const set = SetCache.getActiveSet();
+		try {
+			const set = SetCache.getActiveSet();
 
-		if (!set) {
-			return interaction.reply({
-				content: "There is no active set.",
-				ephemeral: true
-			});
-		}
-
-		const now = new Date();
-		const diff = Math.abs((now.getTime() - set.start_time.getTime()) / 1000);
-
-		console.log(now, set.start_time, diff);
-
-		let res = 'Unknown';
-
-		const tracktimes = Object.keys(set.tracklist).map(Number);
-
-		for (let i = 0; i < tracktimes.length; i++) {
-			if (tracktimes[i] < diff) {
-				res = set.tracklist[tracktimes[i]];
+			if (!set) {
+				return interaction.reply({
+					content: "There is no active set.",
+					ephemeral: true
+				});
 			}
+
+			const now = new Date();
+			const diff = Math.abs((now.getTime() - set.start_time.getTime()) / 1000);
+
+			console.log(now, set.start_time, diff);
+
+			let res = 'Unknown';
+
+			const tracktimes = Object.keys(set.tracklist).map(Number);
+
+			for (let i = 0; i < tracktimes.length; i++) {
+				if (tracktimes[i] < diff) {
+					res = set.tracklist[tracktimes[i]];
+				}
+			}
+
+			const embed = new EmbedBuilder()
+				.setTitle(`${set.name} @ Summer Signal`)
+				.setDescription(`The current track is **${res}**! <:signal:1073292494999142401>`)
+				.setColor("#F6AA73");
+
+			return interaction.reply({
+				embeds: [embed]
+			});
+		} catch (error: any) {
+			console.error(error.message, { error });
 		}
-
-		const embed = new EmbedBuilder()
-			.setTitle(`${set.name} @ Signal`)
-			.setDescription(`The current track is **${res}**! <:signal:1073292494999142401>`)
-			.setColor("#5BB691");
-
-		return interaction.reply({
-			embeds: [embed]
-		});
 	}
 
 	@Slash({
