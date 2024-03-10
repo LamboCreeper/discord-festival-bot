@@ -1,10 +1,15 @@
 import { Discord, Slash, SlashOption } from "discordx";
+import { injectable as Injectable } from "tsyringe";
 import type { CommandInteraction, InteractionResponse, Message } from "discord.js";
-import {ApplicationCommandOptionType, AutocompleteInteraction, PermissionsBitField} from "discord.js";
-import { firestore } from "../app";
+import { ApplicationCommandOptionType, AutocompleteInteraction, PermissionsBitField } from "discord.js";
+import FestivalService from "../services/FestivalService";
 
 @Discord()
+@Injectable()
 export default class CreateFestivalCommand {
+	constructor(
+		private readonly festivalService: FestivalService
+	) {}
 
 	private static async handleEventAutocomplete(interaction: AutocompleteInteraction) {
 		const events = await interaction.guild?.scheduledEvents.fetch();
@@ -53,11 +58,7 @@ export default class CreateFestivalCommand {
 		}
 
 		try {
-			await firestore.collection("festivals").add({
-				date: event.scheduledStartAt,
-				event_id: eventId,
-				guild_id: guild.id
-			});
+			await this.festivalService.createFestivalFromEvent(event);
 		} catch (error) {
 			console.error(error);
 

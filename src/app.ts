@@ -1,8 +1,9 @@
 import "reflect-metadata";
-import { Client } from "discordx";
+import {Client, DIService, tsyringeDependencyRegistryEngine} from "discordx";
 import firebase from "firebase-admin";
 import { Events, IntentsBitField } from "discord.js";
 import DirectoryUtils from "./utils/DirectoryUtils";
+import { container } from "tsyringe";
 
 const serviceAccount = require("../firebase.json");
 
@@ -20,6 +21,11 @@ class App {
 		if (!process.env.DISCORD_TOKEN) {
 			throw new Error("You must supply the DISCORD_TOKEN environment variable.");
 		}
+
+		container.register("Firestore", { useValue: firestore });
+
+		DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
+
 
 		this.client = new Client({
 			botId: process.env.DISCORD_BOT_ID,

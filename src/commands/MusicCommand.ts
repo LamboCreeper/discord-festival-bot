@@ -1,4 +1,5 @@
 import { Discord, Slash, SlashOption } from "discordx";
+import { injectable as Injectable } from "tsyringe";
 import {
 	CommandInteraction,
 	EmbedBuilder,
@@ -14,14 +15,19 @@ import {
 	generateDependencyReport,
 	joinVoiceChannel,
 } from "@discordjs/voice";
-import { firestore } from "../app";
 import SetCache from "../stores/SetCache";
+import FestivalSetService from "../services/FestivalSetService";
 
 console.log(generateDependencyReport());
 
 @Discord()
+@Injectable()
 export default class MusicCommand {
 	private static readonly player = createAudioPlayer();
+
+	constructor(
+		private readonly festivalSetService: FestivalSetService
+	) {}
 
 	@Slash({
 		name: "play",
@@ -77,12 +83,7 @@ export default class MusicCommand {
 					inlineVolume: true
 				});
 			} else {
-				console.log(`festivals/${SetCache.getActiveFestival()}/sets/${setId}`);
-
-				const set = await firestore.doc(
-					`festivals/${SetCache.getActiveFestival()}/sets/${setId}`
-				).get();
-
+				const set = await this.festivalSetService.getSet(SetCache.getActiveFestival(), setId);
 
 				if (!set.exists) {
 					return interaction.editReply({
@@ -120,7 +121,7 @@ export default class MusicCommand {
 				channelId: channel.id,
 			});
 
-			const networkStateChangeHandler = (oldNetworkState: any, newNetworkState: any) => {
+			const networkStateChangeHandler = (_oldNetworkState: any, newNetworkState: any) => {
 				const newUdp = Reflect.get(newNetworkState, 'udp');
 				clearInterval(newUdp?.keepAliveInterval);
 			}
