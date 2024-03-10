@@ -9,6 +9,8 @@ class DirectoryUtils {
 	static async getFilesInDirectory(directory: string, ending: string): Promise<any[]> {
 		const directoryContents = await this.readDirectory(directory);
 
+		console.log(directoryContents);
+
 		return directoryContents
 			.filter(file => file.endsWith(ending))
 			.map(file => this.require(`${directory}/${file}`));
