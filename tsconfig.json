@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
         "target": "ESNext",
+        "skipLibCheck": true,
         "module": "commonjs",
         "outDir": "./build",
         "rootDir": "./src",
