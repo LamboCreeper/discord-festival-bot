@@ -15,3 +15,10 @@ export default class AboutCommand {
 		});
 	}
 }
+
+
+// function getDriveDownload(shareLink: string): string {
+// 	const id = shareLink.split("/d/")[1].split("/view")[0];
+//
+// 	return `https://drive.google.com/uc?export=download&id=${id}`;
+// }

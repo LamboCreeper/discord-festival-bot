@@ -26,7 +26,6 @@ class App {
 
 		DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
 
-
 		this.client = new Client({
 			botId: process.env.DISCORD_BOT_ID,
 			botGuilds: ["542108932878106625", "133741089575141377"],

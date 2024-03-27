@@ -1,6 +1,7 @@
 import { injectable as Injectable, inject as Inject } from "tsyringe";
 import { firestore as fs } from "../app";
-import type { DocumentSnapshot } from "firebase-admin/firestore";
+import type { DocumentSnapshot, DocumentReference } from "firebase-admin/firestore";
+import IFestivalSet from "../interfaces/IFestivalSet";
 
 @Injectable()
 export default class FestivalSetRepository {
@@ -19,5 +20,13 @@ export default class FestivalSetRepository {
 			.collection(FestivalSetRepository.SUB_COLLECTION)
 			.doc(setId)
 			.get();
+	}
+
+	async createSet(festivalId: string, set: IFestivalSet): Promise<DocumentReference> {
+		return this.firestore
+			.collection(FestivalSetRepository.COLLECTION)
+			.doc(festivalId)
+			.collection(FestivalSetRepository.SUB_COLLECTION)
+			.add(set);
 	}
 }
