@@ -1,7 +1,7 @@
 interface ActiveSet {
 	id: string;
 	name: string;
-	start_time: Date;
+	start_time?: Date;
 	tracklist: {
 		[Key: number]: string;
 	}

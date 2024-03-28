@@ -26,11 +26,13 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.1",
+    "@typegoose/typegoose": "^12.2.0",
+    "class-transformer": "^0.5.1",
     "discord.js": "^14.14.1",
     "discordx": "^11.9.0",
     "ffmpeg-static": "^5.1.0",
-    "firebase-admin": "^11.5.0",
     "libsodium-wrappers": "^0.7.13",
+    "mongoose": "^8.2.4",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.8.0"
   },
