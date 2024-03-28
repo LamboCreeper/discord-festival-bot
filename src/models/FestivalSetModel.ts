@@ -1,9 +1,13 @@
-import { ModelOptions, Prop } from "@typegoose/typegoose";
+import { ModelOptions, Prop, Ref } from "@typegoose/typegoose";
 import { BaseModel } from "./BaseModel";
 import { FestivalSetStatus } from "../enums/FestivalSetStatus";
+import { FestivalModel } from "./FestivalModel";
 
 @ModelOptions({ schemaOptions: { collection: "festival_sets" }})
 export class FestivalSetModel extends BaseModel {
+	@Prop({ required: true, ref: () => FestivalModel })
+	festival!: Ref<FestivalModel>;
+
 	@Prop({ required: true })
 	name!: string;
 
@@ -19,6 +23,6 @@ export class FestivalSetModel extends BaseModel {
 	@Prop({ required: true })
 	audio_file!: string;
 
-	@Prop({ required: true })
+	@Prop()
 	start_time?: Date;
 }
