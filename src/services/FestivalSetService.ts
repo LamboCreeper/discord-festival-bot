@@ -1,6 +1,6 @@
 import { injectable as Injectable } from "tsyringe";
-import FestivalSetRepository from "../repositories/FestivalSetRepository";
-import type { DocumentSnapshot } from "firebase-admin/firestore";
+import { FestivalSetRepository } from "../repositories/FestivalSetRepository";
+import { FestivalSetModel } from "../models/FestivalSetModel";
 
 @Injectable()
 export default class FestivalSetService {
@@ -8,7 +8,7 @@ export default class FestivalSetService {
 		private readonly festivalSetRepository: FestivalSetRepository
 	) {}
 
-	async getSet(festivalId: string, setId: string): Promise<DocumentSnapshot> {
-		return this.festivalSetRepository.getSet(festivalId, setId);
+	async getSet(setId: string): Promise<FestivalSetModel | null> {
+		return this.festivalSetRepository.getById(setId);
 	}
 }
