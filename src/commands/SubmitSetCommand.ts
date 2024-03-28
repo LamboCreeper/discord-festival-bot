@@ -1,8 +1,8 @@
-import { Discord, Slash, SlashOption} from "discordx";
-import {injectable as Injectable} from "tsyringe";
+import { Discord, Slash, SlashOption } from "discordx";
+import { container, injectable as Injectable } from "tsyringe";
 import {
 	ActionRowBuilder,
-	ApplicationCommandOptionType,
+	ApplicationCommandOptionType, AutocompleteInteraction,
 	ButtonBuilder,
 	CommandInteraction,
 	EmbedBuilder,
@@ -13,6 +13,7 @@ import {
 } from "discord.js";
 import FestivalSetService from "../services/FestivalSetService";
 import { FestivalSetStatus } from "../enums/FestivalSetStatus";
+import FestivalService from "../services/FestivalService";
 
 enum SubmitSetModalField {
 	NAME = "name",
@@ -29,6 +30,23 @@ export default class SubmitSetCommand {
 		private readonly festivalSetService: FestivalSetService
 	) {}
 
+	private static async handleFestivalAutocomplete(interaction: AutocompleteInteraction) {
+		const guildId = interaction.guild?.id;
+
+		if (!guildId) return interaction.respond([]);
+
+		const festivalService = container.resolve(FestivalService);
+		const [festivals, events] = await Promise.all([
+			festivalService.getAllFestivalsForGuild(guildId),
+			interaction.guild.scheduledEvents.fetch()
+		]);
+
+		return interaction.respond(festivals.map(festival => ({
+			name: events.find(event => event.id === festival.event_id)?.name ?? "",
+			value: festival._id.toString()
+		})));
+	}
+
 	@Slash({
 		name: "submit",
 		description: "Submit a set to a given festival"
@@ -38,6 +56,7 @@ export default class SubmitSetCommand {
 			name: "festival",
 			description: "The festival you want to submit to",
 			type: ApplicationCommandOptionType.String,
+			autocomplete: SubmitSetCommand.handleFestivalAutocomplete
 		})
 		festivalId: string,
 		interaction: CommandInteraction
@@ -121,7 +140,7 @@ export default class SubmitSetCommand {
 		}
 
 		if (!errors.length) {
-			await this.festivalSetService.createSet("6605bbdff001bcb04850d072", {
+			await this.festivalSetService.createSet(festivalId, {
 				name,
 				user_id: interaction.user.id,
 				audio_file: url,

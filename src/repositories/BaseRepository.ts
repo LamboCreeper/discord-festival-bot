@@ -1,5 +1,6 @@
 import { getModelForClass, type ReturnModelType } from "@typegoose/typegoose";
 import { plainToInstance } from "class-transformer";
+import { FilterQuery } from "mongoose";
 import { BaseModel } from "../models/BaseModel";
 
 export abstract class BaseRepository<T extends BaseModel> {
@@ -13,6 +14,10 @@ export abstract class BaseRepository<T extends BaseModel> {
 
 	async getById(id: string) {
 		return this._model.findById(id);
+	}
+
+	async getAll(condition: FilterQuery<T>) {
+		return this._model.find(condition).lean();
 	}
 
 	async create(data: Omit<T, "_id" | "created">) {

@@ -8,6 +8,12 @@ export default class FestivalService {
 		private readonly festivalRepository: FestivalRepository
 	) {}
 
+	async getAllFestivalsForGuild(guildId: string) {
+		return this.festivalRepository.getAll({
+			guild_id: guildId
+		});
+	}
+
 	async createFestivalFromEvent(event: GuildScheduledEvent): Promise<void> {
 		if (!event.scheduledStartAt) {
 			throw new Error("Event must have a start date.");
