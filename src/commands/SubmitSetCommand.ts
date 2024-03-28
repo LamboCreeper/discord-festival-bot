@@ -12,7 +12,7 @@ import {
 	TextInputBuilder
 } from "discord.js";
 import FestivalSetService from "../services/FestivalSetService";
-import FestivalSetStatus from "../enums/FestivalSetStatus";
+import { FestivalSetStatus } from "../enums/FestivalSetStatus";
 
 enum SubmitSetModalField {
 	NAME = "name",
@@ -121,12 +121,12 @@ export default class SubmitSetCommand {
 		}
 
 		if (!errors.length) {
-			await this.festivalSetService.createSet("festivalId", {
+			await this.festivalSetService.createSet("6605bbdff001bcb04850d072", {
 				name,
 				user_id: interaction.user.id,
 				audio_file: url,
 				tracklist: {},
-				status: FestivalSetStatus.UNAPPROVED
+				status: FestivalSetStatus.PENDING,
 			});
 
 			return interaction.reply("Your festival set has been successfully submitted!");

@@ -1,5 +1,3 @@
-enum FestivalSetStatus {
-	UNAPPROVED = "UNAPPROVED"
+export enum FestivalSetStatus {
+	PENDING = "PENDING"
 }
-
-export default FestivalSetStatus;

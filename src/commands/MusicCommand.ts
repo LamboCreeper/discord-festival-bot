@@ -83,34 +83,27 @@ export default class MusicCommand {
 					inlineVolume: true
 				});
 			} else {
-				const set = await this.festivalSetService.getSet(SetCache.getActiveFestival(), setId);
+				const set = await this.festivalSetService.getSet(setId);
 
-				if (!set.exists) {
+				if (!set) {
 					return interaction.editReply({
 						content: "Unknown set."
 					});
 				}
 
-				const setData = set.data();
 
-				if (!setData) {
-					return interaction.editReply({
-						content: "No set data."
-					});
-				}
+				console.log(set);
 
-				console.log(setData);
-
-				title = setData.name;
+				title = set.name;
 
 				SetCache.setActiveSet({
-					id: set.id,
-					tracklist: setData.tracklist,
-					start_time: setData.start_time.toDate(),
-					name: setData.name
+					id: set._id.toString(),
+					tracklist: set.tracklist,
+					start_time: set.start_time,
+					name: set.name
 				});
 
-				resource = createAudioResource(setData.audio_file, {
+				resource = createAudioResource(set.audio_file, {
 					inlineVolume: true
 				});
 			}
@@ -173,6 +166,13 @@ export default class MusicCommand {
 			if (!set) {
 				return interaction.reply({
 					content: "There is no active set.",
+					ephemeral: true
+				});
+			}
+
+			if (!set.start_time) {
+				return interaction.reply({
+					content: "The active set does not have a valid start time.",
 					ephemeral: true
 				});
 			}

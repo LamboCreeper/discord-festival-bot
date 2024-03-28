@@ -1,18 +1,11 @@
 import "reflect-metadata";
 import {Client, DIService, tsyringeDependencyRegistryEngine} from "discordx";
-import firebase from "firebase-admin";
 import { Events, IntentsBitField } from "discord.js";
 import DirectoryUtils from "./utils/DirectoryUtils";
 import { container } from "tsyringe";
+import mongoose from "mongoose";
 
-const serviceAccount = require("../firebase.json");
 
-firebase.initializeApp({
-	credential: firebase.credential.cert(serviceAccount),
-	databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
-});
-
-export const firestore = firebase.firestore();
 
 class App {
 	private static COMMANDS_DIRECTORY = "commands";
@@ -21,8 +14,6 @@ class App {
 		if (!process.env.DISCORD_TOKEN) {
 			throw new Error("You must supply the DISCORD_TOKEN environment variable.");
 		}
-
-		container.register("Firestore", { useValue: firestore });
 
 		DIService.engine = tsyringeDependencyRegistryEngine.setInjector(container);
 
@@ -40,6 +31,14 @@ class App {
 	async init(): Promise<void> {
 		this.client.once(Events.ClientReady, async () => {
 			await this.client.initApplicationCommands();
+
+			if (!process.env.MONGO_URI) {
+				throw new Error("You must supply the MONGO_URI environment variable.");
+			}
+
+			await mongoose.connect(process.env.MONGO_URI, {
+				dbName: "festivals"
+			});
 		});
 
 		await DirectoryUtils.getFilesInDirectory(
