@@ -35,16 +35,22 @@ export default class SubmitSetCommand {
 
 		if (!guildId) return interaction.respond([]);
 
-		const festivalService = container.resolve(FestivalService);
-		const [festivals, events] = await Promise.all([
-			festivalService.getAllFestivalsForGuild(guildId),
-			interaction.guild.scheduledEvents.fetch()
-		]);
+		try {
+			const festivalService = container.resolve(FestivalService);
+			const [festivals, events] = await Promise.all([
+				festivalService.getAllFestivalsForGuild(guildId),
+				interaction.guild.scheduledEvents.fetch()
+			]);
 
-		return interaction.respond(festivals.map(festival => ({
-			name: events.find(event => event.id === festival.event_id)?.name ?? "",
-			value: festival._id.toString()
-		})));
+			return interaction.respond(festivals.map(festival => ({
+				name: events.find(event => event.id === festival.event_id)?.name ?? "",
+				value: festival._id.toString()
+			})));
+		} catch (error) {
+			console.error(error);
+
+			return interaction.respond([]);
+		}
 	}
 
 	@Slash({
@@ -70,10 +76,6 @@ export default class SubmitSetCommand {
 		if (submission) {
 			await this.handleSubmitSetModal(festivalId, submission);
 		}
-	}
-
-	async showAndHandleModalSubmit() {
-
 	}
 
 	private getModal(defaults?: { name?: string; url?: string; tracklist?: string }): ModalBuilder {
@@ -140,15 +142,21 @@ export default class SubmitSetCommand {
 		}
 
 		if (!errors.length) {
-			await this.festivalSetService.createSet(festivalId, {
-				name,
-				user_id: interaction.user.id,
-				audio_file: url,
-				tracklist: {},
-				status: FestivalSetStatus.PENDING,
-			});
+			try {
+				await this.festivalSetService.createSet(festivalId, {
+					name,
+					user_id: interaction.user.id,
+					audio_file: url,
+					tracklist: {},
+					status: FestivalSetStatus.PENDING,
+				});
 
-			return interaction.reply("Your festival set has been successfully submitted!");
+				return interaction.reply("Your festival set has been successfully submitted!");
+			} catch (error) {
+				console.error(error);
+
+				return interaction.reply("There was a problem submitting your set.");
+			}
 		}
 
 		embed.setDescription(errors.join("\n"));
@@ -175,16 +183,9 @@ export default class SubmitSetCommand {
 		});
 
 		if (retryInteraction) {
-			// const previousEntry = this.userSubmissionCache.get(interaction.user.id);
-
 			await retryInteraction.showModal(this.getModal({ name, url, tracklist }));
 		}
 
 		setTimeout(() => this.userSubmissionCache.delete(interaction.user.id), 15_000);
 	}
-
-	// @ButtonComponent({ id: "retry-submit" })
-	// async handleRetrySubmitButton(interaction: ButtonInteraction) {
-	//
-	// }
 }

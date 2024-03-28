@@ -57,8 +57,6 @@ export default class CreateFestivalCommand {
 			});
 		}
 
-		// TODO: present modal to ask for rules
-
 		try {
 			await this.festivalService.createFestivalFromEvent(event);
 		} catch (error) {
