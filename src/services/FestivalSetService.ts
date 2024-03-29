@@ -13,6 +13,22 @@ export default class FestivalSetService {
 		private readonly festivalRepository: FestivalRepository
 	) {}
 
+	parseSubmittedTracklist(tracklist: string): Record<number, string> {
+		const parsed: Record<number, string> = {};
+
+		tracklist.split("\n").forEach(track => {
+			const [time, song] = track.trim().split("] ");
+			const timeFormatted = time.replace("[", "");
+			const [minutes, seconds] = timeFormatted.split(":").map(Number);
+
+			const totalInSeconds = (minutes * 60) + seconds;
+
+			parsed[totalInSeconds] = song.trim();
+		});
+
+		return parsed;
+	}
+
 	async getSet(setId: string): Promise<FestivalSetModel | null> {
 		return this.festivalSetRepository.getById(setId);
 	}
