@@ -154,7 +154,7 @@ export default class SubmitSetCommand {
 					name,
 					user_id: interaction.user.id,
 					audio_file: url,
-					tracklist: {},
+					tracklist: this.festivalSetService.parseSubmittedTracklist(tracklist),
 					status: FestivalSetStatus.PENDING,
 				});
 
