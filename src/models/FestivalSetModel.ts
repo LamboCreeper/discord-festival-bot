@@ -21,6 +21,9 @@ export class FestivalSetModel extends BaseModel {
 	tracklist!: Record<number, string>
 
 	@Prop({ required: true })
+	tracklist_raw!: string;
+
+	@Prop({ required: true })
 	audio_file!: string;
 
 	@Prop()

@@ -60,6 +60,7 @@ export default class SubmitSetCommand {
 	async onSubmitSetCommand(
 		@SlashOption({
 			name: "festival",
+			required: true,
 			description: "The festival you want to submit to",
 			type: ApplicationCommandOptionType.String,
 			autocomplete: SubmitSetCommand.handleFestivalAutocomplete
@@ -155,6 +156,7 @@ export default class SubmitSetCommand {
 					user_id: interaction.user.id,
 					audio_file: url,
 					tracklist: this.festivalSetService.parseSubmittedTracklist(tracklist),
+					tracklist_raw: tracklist,
 					status: FestivalSetStatus.PENDING,
 				});
 
