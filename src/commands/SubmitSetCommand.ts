@@ -67,6 +67,13 @@ export default class SubmitSetCommand {
 		festivalId: string,
 		interaction: CommandInteraction
 	) {
+		if (await this.festivalSetService.hasUserAlreadySubmittedSetForFestival(interaction.user.id, festivalId)) {
+			return interaction.reply({
+				content: "You have already submitted a set for this festival.",
+				ephemeral: true
+			});
+		}
+
 		await interaction.showModal(this.getModal({ name: interaction.user.displayName }));
 
 		const submission = await interaction.awaitModalSubmit({

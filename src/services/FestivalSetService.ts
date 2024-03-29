@@ -1,7 +1,10 @@
 import { injectable as Injectable } from "tsyringe";
+import { Types } from "mongoose";
 import { FestivalSetRepository } from "../repositories/FestivalSetRepository";
 import { FestivalSetModel } from "../models/FestivalSetModel";
 import { FestivalRepository } from "../repositories/FestivalRepository";
+
+const ObjectId = Types.ObjectId;
 
 @Injectable()
 export default class FestivalSetService {
@@ -25,5 +28,14 @@ export default class FestivalSetService {
 			festival,
 			...set
 		})
+	}
+
+	async hasUserAlreadySubmittedSetForFestival(userId: string, festivalId: string): Promise<boolean> {
+		const festivals = await this.festivalSetRepository.getAll({
+			user_id: userId,
+			festival: new ObjectId(festivalId)
+		});
+
+		return festivals.length > 0;
 	}
 }
