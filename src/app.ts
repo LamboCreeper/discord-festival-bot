@@ -48,8 +48,12 @@ class App {
 
 		console.log(`${__dirname}/${App.COMMANDS_DIRECTORY}`);
 
-		this.client.on(Events.InteractionCreate, (interaction) => {
-			this.client.executeInteraction(interaction);
+		this.client.on(Events.InteractionCreate, async (interaction) => {
+			try {
+				await this.client.executeInteraction(interaction);
+			} catch (error) {
+				console.error(error);
+			}
 		});
 
 		await this.client.login(process.env.DISCORD_TOKEN!);

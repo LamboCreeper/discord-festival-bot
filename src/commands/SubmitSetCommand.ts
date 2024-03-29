@@ -31,20 +31,17 @@ export default class SubmitSetCommand {
 	) {}
 
 	private static async handleFestivalAutocomplete(interaction: AutocompleteInteraction) {
-		const guildId = interaction.guild?.id;
+		const guild = interaction.guild;
 
-		if (!guildId) return interaction.respond([]);
+		if (!guild) return interaction.respond([]);
 
 		try {
 			const festivalService = container.resolve(FestivalService);
-			const [festivals, events] = await Promise.all([
-				festivalService.getAllFestivalsForGuild(guildId),
-				interaction.guild.scheduledEvents.fetch()
-			]);
+			const festivals = await festivalService.getAllFestivalsForGuild(guild);
 
 			return interaction.respond(festivals.map(festival => ({
-				name: events.find(event => event.id === festival.event_id)?.name ?? "",
-				value: festival._id.toString()
+				name: festival.name,
+				value: festival.id
 			})));
 		} catch (error) {
 			console.error(error);
