@@ -1,5 +1,5 @@
 import { Discord, Slash, SlashOption } from "discordx";
-import { container, injectable as Injectable } from "tsyringe";
+import { injectable as Injectable } from "tsyringe";
 import {
 	ActionRowBuilder,
 	ApplicationCommandOptionType, AutocompleteInteraction,
@@ -13,7 +13,6 @@ import {
 } from "discord.js";
 import FestivalSetService from "../services/FestivalSetService";
 import { FestivalSetStatus } from "../enums/FestivalSetStatus";
-import FestivalService from "../services/FestivalService";
 
 enum SubmitSetModalField {
 	NAME = "name",
@@ -31,23 +30,12 @@ export default class SubmitSetCommand {
 	) {}
 
 	private static async handleFestivalAutocomplete(interaction: AutocompleteInteraction) {
-		const guild = interaction.guild;
-
-		if (!guild) return interaction.respond([]);
-
-		try {
-			const festivalService = container.resolve(FestivalService);
-			const festivals = await festivalService.getAllFestivalsForGuild(guild);
-
-			return interaction.respond(festivals.map(festival => ({
-				name: festival.name,
-				value: festival.id
-			})));
-		} catch (error) {
-			console.error(error);
-
-			return interaction.respond([]);
-		}
+		return interaction.respond([
+			{
+				name: "420skrillfest",
+				value: "6605bbdff001bcb04850d072"
+			}
+		]);
 	}
 
 	@Slash({
