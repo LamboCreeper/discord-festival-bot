@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Client, DIService, tsyringeDependencyRegistryEngine } from "discordx";
-import { Events, IntentsBitField } from "discord.js";
+import {Events, IntentsBitField} from "discord.js";
 import DirectoryUtils from "./utils/DirectoryUtils";
 import { container } from "tsyringe";
 import mongoose from "mongoose";
@@ -29,7 +29,7 @@ class App {
 	}
 
 	async init(): Promise<void> {
-		this.client.once(Events.ClientReady, async () => {
+		this.client.once(Events.ClientReady, async (client) => {
 			await this.client.initApplicationCommands();
 
 			if (!process.env.MONGO_URI) {
@@ -38,6 +38,10 @@ class App {
 
 			await mongoose.connect(process.env.MONGO_URI, {
 				dbName: "festivals"
+			});
+
+			container.register('GuildManager', {
+				useValue: client.guilds
 			});
 
 			const festivalService = container.resolve(FestivalService);
