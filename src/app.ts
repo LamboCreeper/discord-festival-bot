@@ -1,11 +1,11 @@
 import "reflect-metadata";
-import {Client, DIService, tsyringeDependencyRegistryEngine} from "discordx";
+import { Client, DIService, tsyringeDependencyRegistryEngine } from "discordx";
 import { Events, IntentsBitField } from "discord.js";
 import DirectoryUtils from "./utils/DirectoryUtils";
 import { container } from "tsyringe";
 import mongoose from "mongoose";
-
-
+import FestivalService from "./services/FestivalService";
+import { FestivalSchedulingService } from "./services/FestivalSchedulingService";
 
 class App {
 	private static COMMANDS_DIRECTORY = "commands";
@@ -39,6 +39,13 @@ class App {
 			await mongoose.connect(process.env.MONGO_URI, {
 				dbName: "festivals"
 			});
+
+			const festivalService = container.resolve(FestivalService);
+			const schedulingService = container.resolve(FestivalSchedulingService);
+
+			const festivals = await festivalService.getFutureFestivals();
+
+			festivals.map(schedulingService.scheduleFestival);
 		});
 
 		await DirectoryUtils.getFilesInDirectory(
