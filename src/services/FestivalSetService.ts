@@ -33,6 +33,12 @@ export default class FestivalSetService {
 		return this.festivalSetRepository.getById(setId);
 	}
 
+	async getSetsForFestival(festivalId: string): Promise<FestivalSetModel[]> {
+		return this.festivalSetRepository.getAll({
+			festival: new ObjectId(festivalId)
+		});
+	}
+
 	async createSet(festivalId: string, set: Omit<FestivalSetModel, "_id" | "created" | "festival">){
 		const festival = await this.festivalRepository.getById(festivalId);
 
@@ -43,7 +49,7 @@ export default class FestivalSetService {
 		return this.festivalSetRepository.create({
 			festival,
 			...set
-		})
+		});
 	}
 
 	async hasUserAlreadySubmittedSetForFestival(userId: string, festivalId: string): Promise<boolean> {
