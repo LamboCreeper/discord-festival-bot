@@ -8,15 +8,19 @@ interface ActiveSet {
 }
 
 export default class SetCache {
-	private static activeFestival = "S8zS3VeoKUSEW53hl0gn";
+	private static activeFestival: string | undefined;
 	private static activeSet: ActiveSet | undefined;
 
-	static getActiveFestival(): string {
+	static getActiveFestival(): string | undefined {
 		return SetCache.activeFestival;
 	}
 
 	static getActiveSet(): ActiveSet | undefined {
 		return SetCache.activeSet;
+	}
+
+	static setActiveFestival(festival: string): void {
+		SetCache.activeFestival = festival;
 	}
 
 	static setActiveSet(set: ActiveSet): void {
