@@ -30,12 +30,7 @@ export default class SubmitSetCommand {
 	) {}
 
 	private static async handleFestivalAutocomplete(interaction: AutocompleteInteraction) {
-		return interaction.respond([
-			{
-				name: "420skrillfest",
-				value: "6605bbdff001bcb04850d072"
-			}
-		]);
+		return interaction.respond([]);
 	}
 
 	@Slash({

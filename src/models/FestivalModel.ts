@@ -12,4 +12,7 @@ export class FestivalModel extends BaseModel {
 
 	@Prop({ required: true })
 	event_id!: string;
+
+	@Prop({ required: true, default: true })
+	accepting_submissions!: boolean;
 }
