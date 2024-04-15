@@ -19,7 +19,8 @@ export default class FestivalService {
 		const festival = await this.festivalRepository.create({
 			date: event.scheduledStartAt,
 			event_id: event.id,
-			guild_id: event.guild!.id
+			guild_id: event.guild!.id,
+			accepting_submissions: true
 		});
 
 		this.festivalSchedulingService.scheduleFestival(festival);

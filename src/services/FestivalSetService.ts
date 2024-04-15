@@ -52,6 +52,10 @@ export default class FestivalSetService {
 			throw new Error("Unknown festival, unable to create set.");
 		}
 
+		if (!festival.accepting_submissions) {
+			throw new Error("Festival is no longer accepting submissions.");
+		}
+
 		return this.festivalSetRepository.create({
 			festival,
 			...set
