@@ -1,3 +1,12 @@
+interface ActiveFestival {
+	id: string;
+	name: string;
+	display?: {
+		emoji?: string;
+		colour?: string;
+	}
+}
+
 interface ActiveSet {
 	id: string;
 	name: string;
@@ -8,10 +17,10 @@ interface ActiveSet {
 }
 
 export default class SetCache {
-	private static activeFestival: string | undefined;
+	private static activeFestival: ActiveFestival | undefined;
 	private static activeSet: ActiveSet | undefined;
 
-	static getActiveFestival(): string | undefined {
+	static getActiveFestival(): ActiveFestival | undefined {
 		return SetCache.activeFestival;
 	}
 
@@ -19,7 +28,7 @@ export default class SetCache {
 		return SetCache.activeSet;
 	}
 
-	static setActiveFestival(festival: string): void {
+	static setActiveFestival(festival: ActiveFestival): void {
 		SetCache.activeFestival = festival;
 	}
 
