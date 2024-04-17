@@ -32,6 +32,18 @@ export class FestivalSchedulingService {
 				const guild = await this.guildManager.fetch(festival.guild_id);
 				const event = await guild.scheduledEvents.fetch(festival.event_id);
 
+				const announcementChannel = await guild.channels.fetch(festival.announcement_channel);
+
+				if (announcementChannel?.isTextBased()) {
+					announcementChannel.send(`# Now starting... ${event.name}!`);
+				}
+
+				SetCache.setActiveFestival({
+					id: festival._id.toString(),
+					name: event.name,
+					display: festival.display
+				});
+
 				const festivalSets = await this.festivalSetService.getSetsForFestival(festival._id.toString());
 				const orderedSets = festivalSets
 					.filter(this.isCompleteSet)
@@ -48,6 +60,10 @@ export class FestivalSchedulingService {
 					});
 
 					try {
+						if (announcementChannel?.isTextBased()) {
+							announcementChannel.send(`# Now playing... ${set.name}!`);
+						}
+
 						this.festivalSetService.playSet(event, set);
 					} catch (error) {
 						console.error(error);

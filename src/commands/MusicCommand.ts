@@ -17,6 +17,7 @@ import {
 } from "@discordjs/voice";
 import SetCache from "../stores/SetCache";
 import FestivalSetService from "../services/FestivalSetService";
+import { DiscordUtils } from "../utils/DiscordUtils";
 
 console.log(generateDependencyReport());
 
@@ -161,9 +162,10 @@ export default class MusicCommand {
 	})
 	async onPlayingCommand(interaction: CommandInteraction) {
 		try {
+			const festival = SetCache.getActiveFestival();
 			const set = SetCache.getActiveSet();
 
-			if (!set) {
+			if (!set || !festival) {
 				return interaction.reply({
 					content: "There is no active set.",
 					ephemeral: true
@@ -192,10 +194,17 @@ export default class MusicCommand {
 				}
 			}
 
+			const colour = festival.display?.colour
+				? (
+					DiscordUtils.isColourResolvable(festival.display.colour)
+						? festival.display.colour
+						: "#FFFFFF"
+				) : "#FFFFFF";
+
 			const embed = new EmbedBuilder()
-				.setTitle(`${set.name} @ Summer Signal`)
-				.setDescription(`The current track is **${res}**! <:signal:1073292494999142401>`)
-				.setColor("#F6AA73");
+				.setTitle(`${set.name} @ ${festival.name}`)
+				.setDescription(`The current track is **${res}**! ${festival.display?.emoji}`)
+				.setColor(colour);
 
 			return interaction.reply({
 				embeds: [embed]
@@ -241,7 +250,7 @@ export default class MusicCommand {
 				{ name: "Channel ID", value: `\`${channel.id}\``, inline: true },
 				{ name: "Player In Voice", value: `\`${!!isPlayerInVoice}\``, inline: true },
 				{ name: "Player Status", value: `\`${MusicCommand.player.state.status}\``, inline: true },
-				{ name: "Active Festival", value: `\`${SetCache.getActiveFestival() ?? 'None'}\``, inline: true },
+				{ name: "Active Festival", value: `\`${SetCache.getActiveFestival()?.id ?? 'None'}\``, inline: true },
 				{ name: "Active Set", value: `\`${SetCache.getActiveSet()?.id ?? 'None'}\``, inline: true }
 			]);
 

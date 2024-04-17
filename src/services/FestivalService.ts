@@ -20,7 +20,8 @@ export default class FestivalService {
 			date: event.scheduledStartAt,
 			event_id: event.id,
 			guild_id: event.guild!.id,
-			accepting_submissions: true
+			accepting_submissions: true,
+			announcement_channel: "to-be-added"
 		});
 
 		this.festivalSchedulingService.scheduleFestival(festival);
