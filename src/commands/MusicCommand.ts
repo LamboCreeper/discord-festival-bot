@@ -6,8 +6,7 @@ import {
 	GuildMember,
 	InteractionResponse,
 	PermissionsBitField,
-	ApplicationCommandOptionType,
-	BaseGuildTextChannel
+	ApplicationCommandOptionType
 } from "discord.js";
 import {
 	createAudioPlayer,
@@ -18,6 +17,7 @@ import {
 import SetCache from "../stores/SetCache";
 import FestivalSetService from "../services/FestivalSetService";
 import { DiscordUtils } from "../utils/DiscordUtils";
+import {GoogleDriveUtils} from "../utils/GoogleDriveUtils";
 
 console.log(generateDependencyReport());
 
@@ -92,6 +92,8 @@ export default class MusicCommand {
 					});
 				}
 
+				const audio = GoogleDriveUtils.getDownloadLink(set.audio_file);
+
 
 				console.log(set);
 
@@ -104,7 +106,7 @@ export default class MusicCommand {
 					name: set.name
 				});
 
-				resource = createAudioResource(set.audio_file, {
+				resource = createAudioResource(audio, {
 					inlineVolume: true
 				});
 			}
@@ -137,18 +139,7 @@ export default class MusicCommand {
 
 			MusicCommand.player.play(resource);
 
-			const announcementChannel = await guild.channels.fetch("133741089575141377");
-
-			if (announcementChannel) {
-				const embed = new EmbedBuilder()
-					.setTitle('Summer Signal')
-					.setDescription(`**${title}** is now playing! <:signal:1073292494999142401>`)
-					.setColor("#F6AA73");
-
-				await (announcementChannel as BaseGuildTextChannel).send({
-					embeds: [embed]
-				});
-			}
+			return interaction.editReply(`Now playing "${title}"`);
 		} catch (error) {
 			console.error(error);
 		}

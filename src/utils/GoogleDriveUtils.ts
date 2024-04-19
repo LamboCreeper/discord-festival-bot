@@ -2,6 +2,6 @@ export class GoogleDriveUtils {
 	static getDownloadLink(originalURL: string): string {
 		const id = originalURL.split("/")[5];
 
-		return `https://drive.google.com/uc?export=download&id=${id}`;
+		return `https://www.googleapis.com/drive/v3/files/${id}?alt=media&key=${process.env.GOOGLE_DRIVE_API_KEY}`;
 	}
 }
