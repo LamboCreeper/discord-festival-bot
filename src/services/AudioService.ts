@@ -1,13 +1,23 @@
 import { injectable as Injectable } from "tsyringe";
 import { AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel } from "@discordjs/voice";
 import { StageChannel, VoiceChannel } from "discord.js";
+import { Readable } from "stream";
+import { HTTPService } from "./HTTPService";
 
 @Injectable()
 export class AudioService {
 	private static readonly player = createAudioPlayer();
 
-	createAudioResource(source: string): AudioResource {
-		return createAudioResource(source, {
+	constructor(
+		private readonly httpService: HTTPService
+	) {}
+
+	async createAudioResource(source: string): Promise<AudioResource> {
+		const audioStream = await this.httpService.get<Readable>(source, {
+			responseType: "stream"
+		});
+
+		return createAudioResource(audioStream, {
 			inlineVolume: true
 		});
 	}
