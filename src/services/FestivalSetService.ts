@@ -82,7 +82,7 @@ export default class FestivalSetService {
 			const url = GoogleDriveUtils.getDownloadLink(set.audio_file);
 
 			await this.audioService.playInVoiceChannel(
-				this.audioService.createAudioResource(url),
+				await this.audioService.createAudioResource(url),
 				voice,
 				() => {
 					if (voice instanceof StageChannel) {

@@ -10,14 +10,14 @@ import {
 } from "discord.js";
 import {
 	createAudioPlayer,
-	createAudioResource,
 	generateDependencyReport,
 	joinVoiceChannel,
 } from "@discordjs/voice";
 import SetCache from "../stores/SetCache";
 import FestivalSetService from "../services/FestivalSetService";
 import { DiscordUtils } from "../utils/DiscordUtils";
-import {GoogleDriveUtils} from "../utils/GoogleDriveUtils";
+import { GoogleDriveUtils } from "../utils/GoogleDriveUtils";
+import { AudioService } from "../services/AudioService";
 
 console.log(generateDependencyReport());
 
@@ -27,7 +27,8 @@ export default class MusicCommand {
 	private static readonly player = createAudioPlayer();
 
 	constructor(
-		private readonly festivalSetService: FestivalSetService
+		private readonly festivalSetService: FestivalSetService,
+		private readonly audioService: AudioService
 	) {}
 
 	@Slash({
@@ -41,13 +42,13 @@ export default class MusicCommand {
 			description: "The URL of the set",
 			type: ApplicationCommandOptionType.String,
 		})
-		url: string,
+			url: string,
 		@SlashOption({
 			name: "id",
 			description: "The ID of the set",
 			type: ApplicationCommandOptionType.String,
 		})
-		setId: string,
+			setId: string,
 		interaction: CommandInteraction
 	) {
 		try {
@@ -80,9 +81,7 @@ export default class MusicCommand {
 			}
 
 			if (url) {
-				resource = createAudioResource(url, {
-					inlineVolume: true
-				});
+				resource = await this.audioService.createAudioResource(url);
 			} else {
 				const set = await this.festivalSetService.getSet(setId);
 
@@ -93,7 +92,6 @@ export default class MusicCommand {
 				}
 
 				const audio = GoogleDriveUtils.getDownloadLink(set.audio_file);
-
 
 				console.log(set);
 
@@ -106,9 +104,7 @@ export default class MusicCommand {
 					name: set.name
 				});
 
-				resource = createAudioResource(audio, {
-					inlineVolume: true
-				});
+				resource = await this.audioService.createAudioResource(audio);
 			}
 
 			const connection = joinVoiceChannel({
